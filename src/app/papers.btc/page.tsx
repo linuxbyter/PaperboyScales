@@ -6,13 +6,15 @@ import QuickActionTable from "@/components/QuickActionTable";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDashboard() {
+export default async function Page() {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) return redirect("/login");
+  
   const profile = await getProfileById(session.userId);
-  if (!profile) redirect("/login");
-  if (profile.type !== "admin") redirect("/login");
-
+  if (!profile) return redirect("/login");
+  if (profile.type !== "admin") return redirect("/login");
+  
+  // If admin, show the dashboard
   const stats = await getAdminStats();
   const transactions = await getAllTransactions();
 
@@ -30,6 +32,12 @@ export default async function AdminDashboard() {
 
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         <h2 className="text-2xl font-bold text-ink" style={{ fontFamily: "var(--font-display)" }}>Admin Dashboard</h2>
+        
+        <div className="bg-brass/10 p-4 mb-6 rounded border border-brass/20">
+          <p className="text-sm text-brass">
+            <strong>Note:</strong> Access to this route is also available at <code>/admin/dashboard</code>
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="card p-5">
