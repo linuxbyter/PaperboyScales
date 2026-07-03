@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
 import { getProfileByEmail, createProfile } from "@/lib/db";
 import { createSession } from "@/lib/auth";
 import type { UserType } from "@/lib/types";
 
 export async function POST(req: NextRequest) {
-  let fullName, email, password, phone, country, type;
+  let fullName, email, password, phone, country, userType;
   try {
-    ({ fullName, email, password, phone, country, type } = await req.json());
+    ({ fullName, email, password, phone, country, userType } = await req.json());
   } catch (e) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -26,18 +27,28 @@ export async function POST(req: NextRequest) {
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
-  const profileType: UserType = type === "agent" ? "agent" : "trader";
+  const profileType: UserType = userType === "agent" ? "agent" : "trader";
 
-  const profile = await createProfile({
-    id: crypto.randomUUID(),
-    type: profileType,
-    full_name: fullName,
-    email,
-    password_hash: passwordHash,
-    phone: phone || undefined,
-    country,
-  });
+  let profile;
+  try {
+    profile = await createProfile({
+      id: randomUUID(),
+      type: profileType,
+      full_name: fullName,
+      email,
+      password_hash: passwordHash,
+      phone: phone || undefined,
+      country,
+    });
+  } catch (e) {
+    return NextResponse.json({ error: "Failed to create account" }, { status: 500 });
+  }
 
-  await createSession(profile.id);
+  try {
+    await createSession(profile.id);
+  } catch (e) {
+    return NextResponse.json({ error: "Failed to create session" }, { status: 500 });
+  }
+
   return NextResponse.json({ ok: true });
 }

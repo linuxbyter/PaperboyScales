@@ -22,7 +22,7 @@ export default function AgentSignupPage() {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, password, phone, country, userType: "agent" }),
+        body: JSON.stringify({ fullName, email, password, phone, country, type: "agent" }),
       });
       if (!res.ok) {
         const data = await res.json();
