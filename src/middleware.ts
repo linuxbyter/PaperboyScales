@@ -10,10 +10,29 @@ const publicPaths = ["/login", "/signup", "/agent/signup", "/api/auth"];
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Allow public paths (including auth API) without auth
   if (publicPaths.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
+  // For API routes, return 401 instead of redirecting
+  if (pathname.startsWith("/api")) {
+    const token = request.cookies.get("pb_session")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return jwtVerify(token, secret)
+      .then(() => NextResponse.next())
+      .catch(() => {
+        const res = new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        });
+        return res;
+      });
+  }
+
+  // For pages, redirect to login if not authenticated
   const token = request.cookies.get("pb_session")?.value;
   if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));

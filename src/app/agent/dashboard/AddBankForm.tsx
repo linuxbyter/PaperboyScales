@@ -32,13 +32,20 @@ export default function AddBankForm({ agentId }: { agentId: string }) {
         }),
       });
       if (!res.ok) {
+        if (res.status === 401) {
+          setLoading(false);
+          router.push("/login");
+          return;
+        }
         const data = await res.json();
         throw new Error(data.error || "Failed to add bank");
       }
       setOpen(false);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed");
+      if (!(err instanceof Error)) {
+        setError(err instanceof Error ? err.message : "Failed");
+      }
     }
     setLoading(false);
   }
