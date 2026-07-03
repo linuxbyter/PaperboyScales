@@ -5,7 +5,7 @@ const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || "paperboy-network-secret-change-in-production"
 );
 
-const publicPaths = ["/login", "/signup", "/agent/signup", "/api/auth"];
+const publicPaths = ["/", "/login", "/signup", "/agent/signup", "/api/auth"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
