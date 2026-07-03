@@ -35,9 +35,10 @@ export default function RootLayout({
       <body
         className={`${display.variable} ${sans.variable} ${mono.variable} antialiased`}
       >
-        <ClerkProvider>{children}</ClerkProvider>
+        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );
 }
-
