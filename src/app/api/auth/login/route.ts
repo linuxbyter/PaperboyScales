@@ -4,7 +4,12 @@ import { getProfileByEmail } from "@/lib/db";
 import { createSession } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const { email, password } = await req.json();
+  let email, password;
+  try {
+    ({ email, password } = await req.json());
+  } catch (e) {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
   if (!email || !password) {
     return NextResponse.json({ error: "Email and password required" }, { status: 400 });

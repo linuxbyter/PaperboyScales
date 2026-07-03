@@ -24,7 +24,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch (e) {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
   const { number, label } = body;
   if (!number || !label) return NextResponse.json({ error: "number and label required" }, { status: 400 });
 
@@ -41,7 +47,16 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { id } = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch (e) {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const { id } = body;
+  if (id === undefined) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
   await deleteWhatsappNumber(id);
   return NextResponse.json({ ok: true });
 }

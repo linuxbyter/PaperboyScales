@@ -11,7 +11,19 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { targetUserId, status } = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch (e) {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const { targetUserId, status } = body;
+  if (targetUserId === undefined || status === undefined) {
+    return NextResponse.json({ error: "Missing targetUserId or status" }, { status: 400 });
+  }
+
   const profile = await updateProfileStatus(targetUserId, status);
+  if (!profile) return NextResponse.json({ error: "User not found" }, { status: 404 });
   return NextResponse.json(profile);
 }
