@@ -40,14 +40,16 @@ export async function POST(req: NextRequest) {
       phone: phone || undefined,
       country,
     });
-  } catch (e) {
-    return NextResponse.json({ error: "Failed to create account" }, { status: 500 });
+  } catch (e: any) {
+    console.error('Signup error creating profile:', e);
+    return NextResponse.json({ error: `Failed to create account: ${e.message}` }, { status: 500 });
   }
 
   try {
     await createSession(profile.id);
-  } catch (e) {
-    return NextResponse.json({ error: "Failed to create session" }, { status: 500 });
+  } catch (e: any) {
+    console.error('Signup error creating session:', e);
+    return NextResponse.json({ error: `Failed to create session: ${e.message}` }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });

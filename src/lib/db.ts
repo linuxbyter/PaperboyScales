@@ -22,12 +22,17 @@ export async function getProfileByEmail(email: string): Promise<Profile | null> 
 export async function createProfile(data: {
   id: string; type: UserType; full_name: string; email: string; password_hash: string; phone?: string; country?: string;
 }): Promise<Profile> {
-  const rows = await sql()`
-    INSERT INTO profiles (id, type, full_name, email, password_hash, phone, country, status)
-    VALUES (${data.id}, ${data.type}, ${data.full_name}, ${data.email}, ${data.password_hash}, ${data.phone ?? null}, ${data.country ?? ''}, ${data.type === 'agent' ? 'pending' : 'approved'})
-    RETURNING *
-  `;
-  return (rows as unknown as Profile[])[0];
+  try {
+    const rows = await sql()`
+      INSERT INTO profiles (id, type, full_name, email, password_hash, phone, country, status)
+      VALUES (${data.id}, ${data.type}, ${data.full_name}, ${data.email}, ${data.password_hash}, ${data.phone ?? null}, ${data.country ?? ''}, ${data.type === 'agent' ? 'pending' : 'approved'})
+      RETURNING *
+    `;
+    return (rows as unknown as Profile[])[0];
+  } catch (error) {
+    console.error('Database error in createProfile:', error);
+    throw error;
+  }
 }
 
 export async function updateProfileStatus(userId: string, status: string): Promise<Profile | null> {
