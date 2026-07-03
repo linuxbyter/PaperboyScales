@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getProfileById, getAllAgents } from "@/lib/db";
 import AgentsList from "./AgentsList";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminAgentsPage() {
   const { userId } = await auth();
   if (!userId) redirect("/login");

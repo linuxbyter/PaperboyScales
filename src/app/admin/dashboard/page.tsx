@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getProfileById, getAllTransactions, getAdminStats } from "@/lib/db";
 import TransactionTable from "@/components/TransactionTable";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
   const { userId } = await auth();
   if (!userId) redirect("/login");

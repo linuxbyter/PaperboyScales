@@ -4,6 +4,8 @@ import { getProfileById, getAgentTransactions, getAgentStats } from "@/lib/db";
 import TransactionForm from "@/components/TransactionForm";
 import TransactionTable from "@/components/TransactionTable";
 
+export const dynamic = "force-dynamic";
+
 export default async function AgentDashboard() {
   const { userId } = await auth();
   if (!userId) redirect("/login");

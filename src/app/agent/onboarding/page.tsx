@@ -4,6 +4,8 @@ import { getProfileById, getAgentDetails } from "@/lib/db";
 import StatusBadge from "@/components/ui/StatusBadge";
 import OnboardingForm from "./OnboardingForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function OnboardingPage() {
   const { userId } = await auth();
   if (!userId) redirect("/login");
