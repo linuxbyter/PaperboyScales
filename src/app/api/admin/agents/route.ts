@@ -7,7 +7,7 @@ export async function PATCH(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const admin = await getProfileById(session.userId);
-  if (!admin || admin.role !== "admin") {
+  if (!admin || admin.type !== "admin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

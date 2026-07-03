@@ -63,8 +63,8 @@ export default function AgentsList({ agents }: { agents: Profile[] }) {
                   <p className="text-ink">{agent.country}</p>
                 </div>
                 <div>
-                  <p className="text-muted">Commission Rate</p>
-                  <p className="text-ink">{agent.commission_rate}%</p>
+                  <p className="text-muted">Status</p>
+                  <p className="text-ink">{agent.status}</p>
                 </div>
                 <div>
                   <p className="text-muted">Joined</p>

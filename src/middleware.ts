@@ -5,7 +5,7 @@ const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || "paperboy-network-secret-change-in-production"
 );
 
-const publicPaths = ["/login", "/signup", "/api/auth"];
+const publicPaths = ["/login", "/signup", "/agent/signup", "/api/auth"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -15,18 +15,16 @@ export function middleware(request: NextRequest) {
   }
 
   const token = request.cookies.get("pb_session")?.value;
-
   if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Verify JWT edge-compatible
   return jwtVerify(token, secret)
     .then(() => NextResponse.next())
     .catch(() => {
-      const response = NextResponse.redirect(new URL("/login", request.url));
-      response.cookies.delete("pb_session");
-      return response;
+      const res = NextResponse.redirect(new URL("/login", request.url));
+      res.cookies.delete("pb_session");
+      return res;
     });
 }
 
