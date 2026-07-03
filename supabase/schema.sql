@@ -4,11 +4,12 @@ create table if not exists profiles (
   id text primary key,
   role text not null default 'agent' check (role in ('agent', 'admin')),
   full_name text not null,
-  email text not null,
+  email text not null unique,
   phone text,
   country text not null,
   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected', 'suspended')),
   commission_rate numeric(5,2) not null default 10.00,
+  password_hash text not null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

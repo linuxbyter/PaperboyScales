@@ -10,14 +10,14 @@ import type {
 
 let _sql: ReturnType<typeof neon> | null = null;
 
-function sql() {
+export function sql() {
   if (!_sql) _sql = neon(process.env.DATABASE_URL!);
-  return _sql;
+  return _sql as unknown as (strings: TemplateStringsArray, ...values: unknown[]) => Promise<Record<string, unknown>[]>;
 }
 
 export async function getProfileById(id: string): Promise<Profile | null> {
   const rows = await sql()`SELECT * FROM profiles WHERE id = ${id}`;
-  return (rows as Profile[])[0] ?? null;
+  return (rows as unknown as Profile[])[0] ?? null;
 }
 
 export async function ensureProfile(userId: string, email: string, fullName: string): Promise<Profile> {
@@ -49,12 +49,12 @@ export async function createProfile(profile: {
     VALUES (${profile.id}, ${profile.role}, ${profile.full_name}, ${profile.email}, ${profile.phone ?? null}, ${profile.country}, ${profile.status ?? "pending"}, ${profile.commission_rate ?? 10.00})
     RETURNING *
   `;
-  return (rows as Profile[])[0];
+  return (rows as unknown as Profile[])[0];
 }
 
 export async function getAgentDetails(agentId: string): Promise<AgentDetails | null> {
   const rows = await sql()`SELECT * FROM agent_details WHERE agent_id = ${agentId}`;
-  return (rows as AgentDetails[])[0] ?? null;
+  return (rows as unknown as AgentDetails[])[0] ?? null;
 }
 
 export async function upsertAgentDetails(data: {
@@ -83,12 +83,12 @@ export async function upsertAgentDetails(data: {
       updated_at = now()
     RETURNING *
   `;
-  return (rows as AgentDetails[])[0];
+  return (rows as unknown as AgentDetails[])[0];
 }
 
 export async function getAgentTransactions(agentId: string): Promise<Transaction[]> {
   const rows = await sql()`SELECT * FROM transactions WHERE agent_id = ${agentId} ORDER BY created_at DESC`;
-  return rows as Transaction[];
+  return rows as unknown as Transaction[];
 }
 
 export async function getAllTransactions(): Promise<TransactionWithAgent[]> {
@@ -98,12 +98,12 @@ export async function getAllTransactions(): Promise<TransactionWithAgent[]> {
     JOIN profiles p ON t.agent_id = p.id
     ORDER BY t.created_at DESC
   `;
-  return rows as TransactionWithAgent[];
+  return rows as unknown as TransactionWithAgent[];
 }
 
 export async function getAllAgents(): Promise<Profile[]> {
   const rows = await sql()`SELECT * FROM profiles WHERE role = 'agent' ORDER BY created_at DESC`;
-  return rows as Profile[];
+  return rows as unknown as Profile[];
 }
 
 export async function createTransaction(data: {
@@ -119,17 +119,17 @@ export async function createTransaction(data: {
     VALUES (${data.agent_id}, ${data.client_reference}, ${data.amount}, ${data.currency}, ${data.commission_rate ?? 10.00}, ${data.notes ?? null})
     RETURNING *
   `;
-  return (rows as Transaction[])[0];
+  return (rows as unknown as Transaction[])[0];
 }
 
 export async function updateTransactionStatus(id: string, status: TransactionStatus): Promise<Transaction | null> {
   const rows = await sql()`UPDATE transactions SET status = ${status} WHERE id = ${id} RETURNING *`;
-  return (rows as Transaction[])[0] ?? null;
+  return (rows as unknown as Transaction[])[0] ?? null;
 }
 
 export async function updateProfileStatus(userId: string, status: ProfileStatus): Promise<Profile | null> {
   const rows = await sql()`UPDATE profiles SET status = ${status} WHERE id = ${userId} RETURNING *`;
-  return (rows as Profile[])[0] ?? null;
+  return (rows as unknown as Profile[])[0] ?? null;
 }
 
 export async function getAgentStats(agentId: string) {
@@ -139,7 +139,7 @@ export async function getAgentStats(agentId: string) {
       COALESCE(SUM(CASE WHEN status = 'pending_receipt' THEN 1 ELSE 0 END), 0) as awaiting_receipt
     FROM transactions WHERE agent_id = ${agentId}
   `;
-  return (rows as { commission_earned: number; awaiting_receipt: number }[])[0];
+  return (rows as unknown as { commission_earned: number; awaiting_receipt: number }[])[0];
 }
 
 export async function getAdminStats() {
@@ -150,5 +150,5 @@ export async function getAdminStats() {
       COALESCE(SUM(CASE WHEN status != 'cancelled' THEN amount ELSE 0 END), 0) as total_volume
     FROM transactions
   `;
-  return (rows as { commission_owed: number; in_flight: number; total_volume: number }[])[0];
+  return (rows as unknown as { commission_owed: number; in_flight: number; total_volume: number }[])[0];
 }

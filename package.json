@@ -9,8 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.39.5",
     "@neondatabase/serverless": "^1.1.0",
+    "bcryptjs": "^3.0.3",
+    "cookie": "^2.0.1",
+    "jose": "^6.2.3",
     "next": "^15.5.20",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"

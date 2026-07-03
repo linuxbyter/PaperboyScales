@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
-import ClerkProvider from "@/components/ClerkProvider";
 import "./globals.css";
 
 const display = Space_Grotesk({
@@ -35,7 +34,7 @@ export default function RootLayout({
       <body
         className={`${display.variable} ${sans.variable} ${mono.variable} antialiased`}
       >
-        <ClerkProvider>{children}</ClerkProvider>
+        {children}
       </body>
     </html>
   );

@@ -1,17 +1,17 @@
-import { auth } from "@clerk/nextjs/server";
+import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getProfileById } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function RootPage() {
-  const { userId } = await auth();
+  const session = await getSession();
 
-  if (!userId) {
+  if (!session) {
     redirect("/login");
   }
 
-  const profile = await getProfileById(userId);
+  const profile = await getProfileById(session.userId);
 
   if (!profile) {
     redirect("/login");
