@@ -7,9 +7,6 @@ export default function ClerkProvider({
 }: {
   children: React.ReactNode;
 }) {
-  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
-    return <>{children}</>;
-  }
   return (
     <ClerkProviderBase publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
       {children}
